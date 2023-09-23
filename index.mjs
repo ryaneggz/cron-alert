@@ -4,7 +4,7 @@ config();
 
 const jsonArray = [
     'https://api.promptengineers.ai',
-    'https://dev-api.promptengineers.ai',
+    'https://dev-a3xpi.promptengineers.ai',
 ];
 
 export const handler = async (event) => {
