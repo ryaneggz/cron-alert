@@ -15,7 +15,7 @@ export const handler = async (event) => {
     for (const url of jsonArray) {
         try {
             // Make a GET request to the URL
-            await axios.get(url);
+            await axios.get(url, { timeout: 5000 });
         } catch (error) {
             // If the request fails, form the error message with the URL and the status code
             const errorMessage = `Error with URL: ${url} - Status Code: ${error.response ? error.response.status : 'Unknown'}`;
