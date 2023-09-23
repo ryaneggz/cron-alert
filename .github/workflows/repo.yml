@@ -1,0 +1,50 @@
+name: Repo
+
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+    types: [closed]
+    branches:
+      - 'master'
+
+env:
+  NODE_VERSION: '18.x'
+  AWS_DEFAULT_REGION: us-east-1
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: (github.event_name == 'push') || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+    steps:
+      - run: echo "Triggered by ${{ github.event_name }} event."
+
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+        
+      - name: Update script permissions
+        run: chmod +x ${{ github.workspace }}/scripts/package.sh
+        
+      - name: Zip and Deploy
+        run: bash ${{ github.workspace }}/scripts/package.sh deploy
