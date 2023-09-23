@@ -1,8 +1,6 @@
-## Formio Alerting Lambda
+## Lambda: Cron Alert
 
-- [CDN Links form template](https://remote-dev.form.io/authoring-nfrnwgsspsyzaei/cdnlinks)
-
-#### Test Function
+#### Test Locally
 ```
 ## Install dependencies
 npm install
